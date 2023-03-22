@@ -2,54 +2,78 @@
 
 namespace dom
 {
-    template <size_t N>
-    Matrix<N>::Matrix(int min, int max): _min{min}, _max{max}
+    void matrix::InitMatrix(size_t dimensions)
     {
-
+        _dimensions = dimensions;
+        _arr.resize(dimensions * dimensions);
     }
-    template <size_t N>
-    int &Matrix<N>::At(ssize_t i, ssize_t j)
+    matrix::matrix(size_t dimensions)
     {
-        size_t dim = Dimension();
-        return _arr.at((dim * (i % dim)) + (j % dim));
+        InitMatrix(dimensions);
     }
-    template <size_t N>
-    int Matrix<N>::Determinant() const
+    matrix::matrix(size_t dimensions, std::vector<std::vector<int>> mat)
     {
-        size_t dim = _arr.size() / _arr.size();
-        int subtrahend{}, subtractor{};
-        size_t row{};
-        for (size_t i{}; i < dim; i++) {
-            int tmp{1};
-            for (size_t j{i}; j < i + dim; j++)
+        InitMatrix(dimensions);
+        for (size_t i{}; i < dimensions; i++) {
+            for (size_t j = 0; j < dimensions; j++)
             {
-                tmp *= At(row, j);
-                row++;
+                At(i, j) = mat[i][j];
             }
-            subtrahend += tmp;
-            row = 0;
         }
-        return 0;
+    }
+    matrix::matrix(size_t dimensions, int initValue) {
+        InitMatrix(dimensions);
+        std::fill(_arr.begin(), _arr.end(), initValue);
     }
 
-    // add one value to one cell and if overflow _max then add one value to next position cell and etc etc
-    // this is for easier way going through all possible matrices within _min - _max values for N x N matrix
-    template <size_t N>
-    void Matrix<N>::NextMatrix() {
-
+    const int matrix::At(size_t i, size_t j) const {
+        return _arr[_dimensions * i + j];
+    }
+    int &matrix::At(size_t i, size_t j) {
+        return _arr[_dimensions * i + j];
     }
 
-    template <size_t N>
-    void Matrix<N>::Print() const
-    {
-        size_t dim = Dimension();
-        for (size_t i{}; i < dim; i ++) {
+    void matrix::Print() const {
+        for (size_t i = 0; i < _dimensions; i++)
+        {
             std::cout << "[ ";
-            for (size_t j{}; j < dim; j++) {
+            for (size_t j = 0; j < _dimensions; j++)
+            {
                 std::cout << At(i, j) << " ";
             }
-            std::cout << "]\n"; 
+            std::cout << "]\n";
         }
-        std::cout << "\n";
+    }
+
+    void matrix::Fill(int value) {
+        std::fill(_arr.begin(), _arr.end(), value);
+    }
+    // max inclusive 
+    void NextCombination(matrix& m, int min, int max) {
+        if (min > max)
+            throw std::runtime_error("min > max");
+        
+        size_t dim{m.Dimensions()};
+
+        int carry{1};
+        for (size_t i = 0; i < dim; i++)
+        {
+            for (size_t j = 0; j < dim; j++)
+            {
+                int& n = m.At(i, j);
+                
+                if (n + carry > max) {
+                    n = min;
+                    carry = 1;
+                } else {
+                    n += carry;
+                    carry = 0;
+                    return;
+                }
+            }
+        }
+        if (carry > 0) {
+            m.Fill(min);
+        }
     }
 } // namespace dom

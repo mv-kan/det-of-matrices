@@ -3,36 +3,35 @@
 
 #include <iostream>
 #include <array>
+#include <vector>
 
 // det of matrices (dom)
 namespace dom
 {
-    class Test{};
-    // N is dimension of matrix, set 2 for 2 x 2 matrix, or 3 for 3 x 3
-    template<size_t N>
-    class Matrix
+    class matrix
     {
     private:
-        std::array<int, N * N> _arr{};
-        // min or max value of one number in matrix
-        int _min{}, _max{};
+        std::vector<int> _arr{};
+        size_t _dimensions{};
+
+        void InitMatrix(size_t dimensions);
     public:
-        Matrix(int min, int max);
-        
-        ~Matrix() = default;
+        matrix(size_t dimensions);
+        matrix(size_t dimensions, std::vector<std::vector<int>> mat);
+        matrix(size_t dimensions, int initValue);
+        ~matrix() = default;
 
-        // handles overflow by j and i, can enter negative values
-        int &At(ssize_t i, ssize_t j);
-
-        int Determinant() const;
-
-        inline size_t Dimension() { return _arr.size() / _arr.size(); };
-        // add one value to one cell and if overflow _max then add one value to next position cell and etc etc
-        // this is for easier way going through all possible matrices within _min - _max values for N x N matrix
-        void NextMatrix();
+        const int At(size_t i, size_t j) const;
+        int &At(size_t i, size_t j);
 
         void Print() const;
+
+        size_t Dimensions() const{ return _dimensions; }
+
+        void Fill (int value);
     };
+    // this function adds to matrix value 1 and if this value overflows max, reset overflowed value with min and add 1 to next cell
+    void NextCombination(matrix& m, int min, int max);
 } // namespace dom
 
 #endif // MATRIX_H
