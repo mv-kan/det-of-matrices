@@ -6,6 +6,8 @@ set(TARGET
 )
 set(SOURCES
     src/main.cpp
+    src/matrix.cpp
+    src/matrix.h
 )
 
 project(${TARGET})
@@ -14,4 +16,4 @@ set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(${TARGET} ${SOURCES})
 
-target_compile_features(${TARGET} PRIVATE cxx_std_11)
+target_compile_features(${TARGET} PRIVATE cxx_std_20)
