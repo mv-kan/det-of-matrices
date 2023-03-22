@@ -11,7 +11,7 @@ namespace dom
     {
         InitMatrix(dimensions);
     }
-    matrix::matrix(size_t dimensions, std::vector<std::vector<int>> mat)
+    matrix::matrix(size_t dimensions, const std::vector<std::vector<int>>& mat)
     {
         InitMatrix(dimensions);
         for (size_t i{}; i < dimensions; i++) {
@@ -25,8 +25,15 @@ namespace dom
         InitMatrix(dimensions);
         std::fill(_arr.begin(), _arr.end(), initValue);
     }
+    matrix::matrix(size_t dimensions, const std::vector<int>& mat) {
+        InitMatrix(dimensions);
 
-    const int matrix::At(size_t i, size_t j) const {
+        for (size_t i = 0; i < mat.size(); i++) {
+            At(i / dimensions, i % dimensions) = mat[i];
+        }
+    }
+
+    int matrix::At(size_t i, size_t j) const {
         return _arr[_dimensions * i + j];
     }
     int &matrix::At(size_t i, size_t j) {
@@ -75,5 +82,48 @@ namespace dom
         if (carry > 0) {
             m.Fill(min);
         }
+    }
+
+    int matrix::Det() const {
+        if (_dimensions == 2) {
+            return At(0, 0) * At(1, 1) - At(0, 1) * At(1, 0);
+        }
+        std::vector<int> values{};
+        for (size_t i = 0; i < _dimensions; i++)
+        {
+            if (At(0, i) == 0) {
+                values.push_back(0);
+                continue;
+            }
+            int tmp{};
+            
+            // inner matrix
+            std::vector<int> mat{};
+            
+            // fill the matrix
+            for (size_t row = 1; row < _dimensions; row++)
+            {
+                for (size_t col = 0; col < _dimensions; col++)
+                {
+                    if (col == i)
+                        continue;
+                    mat.push_back(At(row, col));
+                }
+            }
+            
+            tmp = matrix{_dimensions - 1, mat}.Det();
+
+            values.push_back(At(0, i) * tmp);
+        }
+        int result{};
+        for (size_t i = 0; i < values.size(); i++)
+        {
+            if(i % 2 == 0)
+                result += values[i];
+            else 
+                result -= values[i];
+        }
+
+        return result;
     }
 } // namespace dom
