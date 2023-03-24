@@ -88,17 +88,18 @@ namespace dom
         if (_dimensions == 2) {
             return At(0, 0) * At(1, 1) - At(0, 1) * At(1, 0);
         }
-        std::vector<int> values{};
+        int result{};
+
+        // inner matrix
+        size_t submat_size{(_dimensions - 1) * (_dimensions - 1)};
+        std::vector<int> submat(submat_size);
+        size_t submat_i{};
         for (size_t i = 0; i < _dimensions; i++)
         {
             if (At(0, i) == 0) {
-                values.push_back(0);
                 continue;
             }
             int tmp{};
-            
-            // inner matrix
-            std::vector<int> mat{};
             
             // fill the matrix
             for (size_t row = 1; row < _dimensions; row++)
@@ -107,23 +108,15 @@ namespace dom
                 {
                     if (col == i)
                         continue;
-                    mat.push_back(At(row, col));
+                    submat[submat_i] = At(row, col);
+                    submat_i++;
                 }
             }
-            
-            tmp = matrix{_dimensions - 1, mat}.Det();
+            submat_i = 0;
+            tmp = matrix{_dimensions - 1, submat}.Det();
 
-            values.push_back(At(0, i) * tmp);
+            result += (i % 2 == 0) ? tmp : -tmp;
         }
-        int result{};
-        for (size_t i = 0; i < values.size(); i++)
-        {
-            if(i % 2 == 0)
-                result += values[i];
-            else 
-                result -= values[i];
-        }
-
         return result;
     }
 } // namespace dom
