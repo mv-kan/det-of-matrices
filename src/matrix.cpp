@@ -32,6 +32,10 @@ namespace dom
             At(i / dimensions, i % dimensions) = mat[i];
         }
     }
+    matrix::matrix(size_t dimensions, std::vector<int> &&mat): _dimensions(dimensions)
+    {   
+        _arr = std::move(mat);
+    }
 
     int matrix::At(size_t i, size_t j) const {
         return _arr[_dimensions * i + j];
@@ -92,8 +96,11 @@ namespace dom
 
         // inner matrix
         size_t submat_size{(_dimensions - 1) * (_dimensions - 1)};
-        std::vector<int> submat(submat_size);
+        // matrix with det function
+        matrix submat{submat_size};
+        // previous solution use one dimensional vector, it is just legacy that just works and I don't want to change it
         size_t submat_i{};
+
         for (size_t i = 0; i < _dimensions; i++)
         {
             if (At(0, i) == 0) {
@@ -108,12 +115,13 @@ namespace dom
                 {
                     if (col == i)
                         continue;
-                    submat[submat_i] = At(row, col);
+                    submat._arr[submat_i] = At(row, col);
                     submat_i++;
                 }
             }
             submat_i = 0;
-            tmp = matrix{_dimensions - 1, submat}.Det();
+            
+            tmp = submat.Det();
 
             result += (i % 2 == 0) ? tmp : -tmp;
         }

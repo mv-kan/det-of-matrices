@@ -11,7 +11,7 @@ namespace dom
     class matrix
     {
     private:
-        std::vector<int> _arr{};
+        std::vector<int> _arr;
         size_t _dimensions{};
 
         void InitMatrix(size_t dimensions);
@@ -20,6 +20,9 @@ namespace dom
         matrix(size_t dimensions, const std::vector<std::vector<int>>& mat);
         matrix(size_t dimensions, const std::vector<int>&mat);
         matrix(size_t dimensions, int initValue);
+        
+        // moves mat to internal _arr
+        matrix(size_t dimensions, std::vector<int>&& mat);
         ~matrix() = default;
 
         int At(size_t i, size_t j) const;
