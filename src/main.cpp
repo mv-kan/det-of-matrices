@@ -23,11 +23,13 @@ public:
         return std::chrono::duration_cast<Second>(Clock::now() - m_beg).count();
     }
 };
+
+
 int main()
 {
-    const int min = 0;
-    const int max = 10;
-    const size_t dim = 3;
+    const int min = 0;    // 0
+    const int max = 3;    // 10
+    const size_t dim = 4; // 3 
 #ifndef NDEBUG
     std::cout << "testing of det function" << std::endl;
     dom::matrix m2{dim, {{6,1,1},{4,-2,5},{2,8,7}}};

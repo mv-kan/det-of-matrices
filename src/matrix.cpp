@@ -83,6 +83,9 @@ namespace dom
             m.Fill(min);
         }
     }
+// register compilator
+// wstawki asemblerowe 
+// different compilators 
 
     int matrix::Det() const {
         if (_dimensions == 2) {
