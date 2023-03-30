@@ -8,6 +8,8 @@ set(SOURCES
     src/main.cpp
     src/matrix.h
     src/matrix.cpp
+    src/calcnonzero.h
+    src/calcnonzero.cpp
 )
 
 project(${TARGET})

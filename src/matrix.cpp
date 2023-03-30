@@ -11,36 +11,43 @@ namespace dom
     {
         InitMatrix(dimensions);
     }
-    matrix::matrix(size_t dimensions, const std::vector<std::vector<int>>& mat)
+    matrix::matrix(size_t dimensions, const std::vector<std::vector<int>> &mat)
     {
         InitMatrix(dimensions);
-        for (size_t i{}; i < dimensions; i++) {
+        for (size_t i{}; i < dimensions; i++)
+        {
             for (size_t j = 0; j < dimensions; j++)
             {
                 At(i, j) = mat[i][j];
             }
         }
     }
-    matrix::matrix(size_t dimensions, int initValue) {
+    matrix::matrix(size_t dimensions, int initValue)
+    {
         InitMatrix(dimensions);
         std::fill(_arr.begin(), _arr.end(), initValue);
     }
-    matrix::matrix(size_t dimensions, const std::vector<int>& mat) {
+    matrix::matrix(size_t dimensions, const std::vector<int> &mat)
+    {
         InitMatrix(dimensions);
 
-        for (size_t i = 0; i < mat.size(); i++) {
+        for (size_t i = 0; i < mat.size(); i++)
+        {
             At(i / dimensions, i % dimensions) = mat[i];
         }
     }
 
-    int matrix::At(size_t i, size_t j) const {
+    int matrix::At(size_t i, size_t j) const
+    {
         return _arr[_dimensions * i + j];
     }
-    int &matrix::At(size_t i, size_t j) {
+    int &matrix::At(size_t i, size_t j)
+    {
         return _arr[_dimensions * i + j];
     }
 
-    void matrix::Print() const {
+    void matrix::Print() const
+    {
         for (size_t i = 0; i < _dimensions; i++)
         {
             std::cout << "[ ";
@@ -52,43 +59,51 @@ namespace dom
         }
     }
 
-    void matrix::Fill(int value) {
+    void matrix::Fill(int value)
+    {
         std::fill(_arr.begin(), _arr.end(), value);
     }
-    // max inclusive 
-    void NextCombination(matrix& m, int min, int max) {
+    // max inclusive combinationJump means how many combinations to skip
+    void NextCombination(matrix &m, int min, int max, size_t combinationJump)
+    {
         if (min > max)
             throw std::runtime_error("min > max");
-        
+
         size_t dim{m.Dimensions()};
 
-        int carry{1};
+        int carry{static_cast<int>(combinationJump)};
         for (size_t i = 0; i < dim; i++)
         {
             for (size_t j = 0; j < dim; j++)
             {
-                int& n = m.At(i, j);
-                
-                if (n + carry > max) {
-                    n = min;
-                    carry = 1;
-                } else {
+                int &n = m.At(i, j);
+                int sum{n + carry};
+                if (sum > max)
+                {
+                    n = sum % (max + 1);
+                    carry = sum / (max + 1);
+                }
+                else
+                {
                     n += carry;
                     carry = 0;
                     return;
                 }
             }
         }
-        if (carry > 0) {
+        if (carry > 0)
+        {
             m.Fill(min);
         }
     }
-// register compilator
-// wstawki asemblerowe 
-// different compilators 
+    // register compilator
+    // wstawki asemblerowe
+    // different compilators
 
-    int matrix::Det() const {
-        if (_dimensions == 2) {
+    int matrix::Det() const
+    {
+        if (_dimensions == 2)
+        {
             return At(0, 0) * At(1, 1) - At(0, 1) * At(1, 0);
         }
         int result{};
@@ -100,11 +115,12 @@ namespace dom
 
         for (size_t i = 0; i < _dimensions; i++)
         {
-            if (At(0, i) == 0) {
+            if (At(0, i) == 0)
+            {
                 continue;
             }
             int tmp{};
-            
+
             // fill the matrix
             for (size_t row = 1; row < _dimensions; row++)
             {
@@ -117,7 +133,7 @@ namespace dom
                 }
             }
             submat_i = 0;
-            
+
             tmp = submat.Det() * At(0, i);
 
             result += (i % 2 == 0) ? tmp : -tmp;

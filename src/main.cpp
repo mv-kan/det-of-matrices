@@ -1,8 +1,9 @@
 #include <iostream>
 #include "matrix.h"
 #include <cmath>
-
+#include "calcnonzero.h"
 #include <chrono> // for std::chrono functions
+#include <thread>
 class Timer
 {
 private:
@@ -24,57 +25,37 @@ public:
     }
 };
 
-
 int main()
 {
     const int min = 0;    // 0
-    const int max = 3;    // 10
-    const size_t dim = 4; // 3 
+    const int max = 3;   // 10
+    const size_t dim = 4; // 3
 #ifndef NDEBUG
     std::cout << "testing of det function" << std::endl;
-    dom::matrix m2{dim, {{6,1,1},{4,-2,5},{2,8,7}}};
+    dom::matrix m2{3, {{6, 1, 1}, {4, -2, 5}, {2, 8, 7}}};
+    m2.Print();
     std::cout << "result: " << m2.Det() << std::endl;
     std::cout << "true result: " << -306 << std::endl;
 #endif
-    dom::matrix m{dim, min};
     // number of combinations that are non zero determinant
-    size_t numOfNonZero{};
     size_t numOfAllPossibleCombinations{static_cast<size_t>(std::pow(max + 1, dim * dim))};
-    
+    std::cout << "\n";
     Timer t;
 
     std::cout << "all combinations: " << numOfAllPossibleCombinations << std::endl;
     std::cout << "min " << min << " max " << max << "\n";
     std::cout << "dimensions: " << dim << "x" << dim << "\n";
-    int percentFinished{0};
-    for (size_t i = 0; i < numOfAllPossibleCombinations; i++)
-    {
-        int det{m.Det()};
-        if (det != 0)
-            numOfNonZero++;
+    std::cout << "available hardware concurrency: " << std::thread::hardware_concurrency() << "\n";
 
-#ifndef NDEBUG
-        std::cout << "Combination: \n";
-        m.Print();
-        std::cout << "Iteration: " << i << "\n";
-        std::cout << "Det: " << det << "\n";
-#endif
-        // next combination
-        dom::NextCombination(m, min, max);
-
-        double percent { ((double)i * 100 / numOfAllPossibleCombinations) };
-        if (percentFinished < percent) {
-            percentFinished++;
-            std::cout << "Progress " << percentFinished << "%, combination num " << i << "\n";
-        }
-    }
-
+                                                           size_t numOfNonZero = dom::CalcNonZero(dim, min, max);
 #ifndef NDEBUG
     std::cout << "Time: " << t.elapsed() << "\n";
 #endif
     std::cout << "non zero: \t" << numOfNonZero << std::endl;
+
     std::cout << "all possible: \t" << numOfAllPossibleCombinations << std::endl;
     std::cout << "time: \t\t" << t.elapsed() << "\n";
     std::cout << "min " << min << " max " << max << "\n";
     std::cout << "dimensions: " << dim << "x" << dim << "\n";
+    std::cout << "available hardware concurrency: " << std::thread::hardware_concurrency() << "\n";
 }

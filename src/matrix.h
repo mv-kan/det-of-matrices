@@ -15,12 +15,13 @@ namespace dom
         size_t _dimensions{};
 
         void InitMatrix(size_t dimensions);
+
     public:
         matrix(size_t dimensions);
-        matrix(size_t dimensions, const std::vector<std::vector<int>>& mat);
-        matrix(size_t dimensions, const std::vector<int>&mat);
+        matrix(size_t dimensions, const std::vector<std::vector<int>> &mat);
+        matrix(size_t dimensions, const std::vector<int> &mat);
         matrix(size_t dimensions, int initValue);
-    
+
         ~matrix() = default;
 
         int At(size_t i, size_t j) const;
@@ -28,14 +29,14 @@ namespace dom
 
         void Print() const;
 
-        size_t Dimensions() const{ return _dimensions; }
+        size_t Dimensions() const { return _dimensions; }
 
-        void Fill (int value);
+        void Fill(int value);
         // calc determinant
         int Det() const;
     };
     // this function adds to matrix value 1 and if this value overflows max, reset overflowed value with min and add 1 to next cell
-    void NextCombination(matrix& m, int min, int max);
+    void NextCombination(matrix &m, int min, int max, size_t combinationJump = 1);
 } // namespace dom
 
 #endif // MATRIX_H
